@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pangenesis Mini Sim</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-image: url('arena.png');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+    }
+
+    /* Player buttons */
+    .button-container {
+        position: absolute;
+        bottom:0
+        align: center;
+        margin-bottom: 25vh;
+    }
+    
+    .playerButton {
+        width: 5vh;
+        height: 5vh;
+        background-color: grey;
+        color: white;
+        border: solid;
+        border-radius: .5vh;
+        border-color: black;
+        font-size: 1.2vh;
+        cursor: pointer;
+        transition: transform 0.5s ease-in-out;
+        text-align: center;
+        text-shadow:
+            -.1vh -.1vh 0 black,
+             .1vh -.1vh 0 black,
+            -.1vh  .1vh 0 black,
+             .1vh  .1vh 0 black;  
+    }
+    .playerButton:hover {
+        background-color: blue;
+    }
+    .playerButton.selected {
+        background-color: blue;
+        border: solid;
+        border-color: purple;
+        border-radius: 1.0vh;
+    }
+    
+    
+    /* Tower buttons */
+    .towerButton {
+        position: absolute;
+        width:  15vh;
+        height: 15vh;
+        
+        border: solid;
+        border-color: black;
+        border-radius: 50%;
+        background-color: gray;
+        font-weight: bold;
+    }
+    .towerButton:hover {
+        border-color: blue;
+        border-radius: 25%;
+    }
+    .towerButton.black {
+        border-color: white;
+        color: white;
+        background-color: black;
+    }
+    .towerButton.white {
+        border-color: black;
+        color: black;
+        background-color: white;
+    }
+    .towerButton.wrong {
+        border-color: black;
+        color: black;
+        background-color: red;
+    }
+    .towerButton.correct {
+        border-color: black;
+        color: black;
+        background-color: green;
+    }
+    
+    /* Misc buttons */
+    .newGamebutton {
+        width: 10vh;
+        height: 5vh;
+        position: absolute;
+        top:  1vh;
+        left: 1vh;
+    }
+    .resetbutton {
+        width: 10vh;
+        height: 5vh;
+        position: absolute;
+        top:  6vh;
+        left: 1vh;
+    }
+    
+    
+    /* Timer */
+    #timer {
+        position: absolute;
+        top:    1vh;
+        right:  1vh;
+        width: 10vh;
+        height: 2vh;
+        padding: .5px;
+        border: .1vh solid #ccc;
+        border-radius: .5vh;
+        font-size: 1.6vh;
+        background-color: blue;
+        color: white;
+        text-align: right;
+    }
+    
+    
+    /* Debuff icons */
+    #leftDebuff {
+        position: absolute;
+        margin-left: -10vh;
+        margin-bottom: 37vh;
+        width: 48px;
+        height: 64px;
+        align: center;
+    }
+    
+    #rightDebuff {
+        position: absolute;
+        margin-left: 10vh;
+        margin-bottom: 37vh;
+        width: 48px;
+        height: 64px;
+        align: center;
+    }
+    
+    #leftDebuffLabel {
+        position: absolute;
+        margin-left: -7.8vh;
+        margin-bottom: 38vh;
+        
+        align: center;
+        width: 4.8vh;
+        height: 6.4vh;
+        color: white;
+        background-color: transparent;
+        border: none;
+        font-size: 3.2vh;
+        text-align: center;
+        font-weight: bold;
+        
+        text-shadow:
+            -.1vh -.1vh 0 black,
+             .1vh -.1vh 0 black,
+            -.1vh  .1vh 0 black,
+             .1vh  .1vh 0 black;
+    }
+    
+    #rightDebuffLabel {
+        position: absolute;
+        margin-left: 10vh;
+        margin-bottom: 35vh;
+        
+        align: center;
+        width:  9.6vh;
+        height: 6.4vh;
+        color: white;
+        background-color: transparent;
+        border: none;
+        font-size: 1.6vh;
+        text-align: center;
+        font-weight: bold;
+        
+        text-shadow:
+            -.1vh -.1vh 0 black,
+             .1vh -.1vh 0 black,
+            -.1vh  .1vh 0 black,
+             .1vh  .1vh 0 black;
+    }
+    
+</style>
+</head>
+<body>
+
+<img src="critical.png" id="leftDebuff" style="display: none;">
+<input type="text" id="leftDebuffLabel" readonly placeholder="" style="display: none;">
+
+<img src="astral.png"  id="rightDebuff" style="display: none;">
+<input type="text" id="rightDebuffLabel" readonly placeholder="" style="display: none;">
+
+<div class="button-container">
+    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+</div>
+<button class="towerButton" id="wTower" onclick="towerSelect(this)" style="bottom:55vh; margin-left: -100vh">W</button>
+<button class="towerButton" id="nw1Tower" onclick="towerSelect(this)"style="bottom:65vh; margin-left: -70vh">NW1</button>
+<button class="towerButton" id="nw2Tower" onclick="towerSelect(this)"style="bottom:65vh; margin-left: -35vh">NW2</button>
+<button class="towerButton" id="sw1Tower" onclick="towerSelect(this)"style="bottom:45vh; margin-left: -70vh">SW1</button>
+<button class="towerButton" id="sw2Tower" onclick="towerSelect(this)"style="bottom:45vh; margin-left: -35vh">SW2</button>
+<button class="towerButton" id="eTower" onclick="towerSelect(this)" style="bottom:55vh; margin-left: 100vh">E</button>
+<button class="towerButton" id="ne1Tower" onclick="towerSelect(this)" style="bottom:65vh; margin-left: 70vh">NE1</button>
+<button class="towerButton" id="ne2Tower" onclick="towerSelect(this)" style="bottom:65vh; margin-left: 35vh">NE2</button>
+<button class="towerButton" id="se1Tower" onclick="towerSelect(this)" style="bottom:45vh; margin-left: 70vh">SE1</button>
+<button class="towerButton" id="se2Tower" onclick="towerSelect(this)" style="bottom:45vh; margin-left: 35vh">SE2</button>
+
+<button class="newGamebutton" onclick="newGame()">New Game</button>
+<button class="resetbutton" onclick="reset()">Reset</button>
+
+<input type="text" id="timer" disabled placeholder="">
+
+
+<script>
+    // Global vars
+    var curPlayer = null;
+    var correctTower = null;
+    var startTime;
+    var leftDebuffImg = document.getElementById("leftDebuff");
+    var rightDebuffImg = document.getElementById("rightDebuff");
+    var leftDebuffLabel = document.getElementById("leftDebuffLabel");
+    var rightDebuffLabel = document.getElementById("rightDebuffLabel");
+    var timeBox = document.getElementById("timer");
+    
+    /* Player on click
+     *
+     *
+     */
+    function playerSelect(selectedPlayer) {
+        var players = document.querySelectorAll('.playerButton');
+        players.forEach(function(playerButton) {
+            if(selectedPlayer !== playerButton) {
+                playerButton.classList.remove('selected');
+            }
+        });
+        selectedPlayer.classList.add('selected');
+        curPlayer = selectedPlayer;
+    }
+        
+    /* Tower on click
+     *
+     *
+     */
+    function towerSelect(selectedTower) {
+        if(correctTower != null){
+            if(selectedTower == correctTower) {
+                selectedTower.classList.add("correct");
+                stopTime();
+            } else {
+                selectedTower.classList.add("wrong");
+            }
+        }
+    }
+    
+    /* Set up new game
+     *
+     *
+     */
+    function newGame() {
+        if (curPlayer != null){
+            var players = Array.from(document.querySelectorAll('.playerButton'));
+            var zeroes = [];
+            var ones = [];
+            var stacks = 2;
+            var east = false;
+            var eTowerBlack = false;
+            
+            timeBox.value = "";
+            
+            //Randomize tower color
+            resetTowers();
+            
+            eTowerBlack = Math.random() < 0.5;
+            if(eTowerBlack) {
+                document.getElementById("eTower").classList.add("black");
+                document.getElementById("se1Tower").classList.add("black");
+                document.getElementById("se2Tower").classList.add("black");
+                document.getElementById("ne1Tower").classList.add("white");
+                document.getElementById("ne2Tower").classList.add("white");
+                document.getElementById("wTower").classList.add("white");
+                document.getElementById("sw1Tower").classList.add("white");
+                document.getElementById("sw2Tower").classList.add("white");
+                document.getElementById("nw1Tower").classList.add("black");
+                document.getElementById("nw2Tower").classList.add("black");
+            } else {
+                document.getElementById("eTower").classList.add("white");
+                document.getElementById("se1Tower").classList.add("white");
+                document.getElementById("se2Tower").classList.add("white");
+                document.getElementById("ne1Tower").classList.add("black");
+                document.getElementById("ne2Tower").classList.add("black");
+                document.getElementById("wTower").classList.add("black");
+                document.getElementById("sw1Tower").classList.add("black");
+                document.getElementById("sw2Tower").classList.add("black");
+                document.getElementById("nw1Tower").classList.add("white");
+                document.getElementById("nw2Tower").classList.add("white");
+            }
+            
+            // Select zeroes and ones
+            var twos = shuffle(players);
+            zeroes.push(twos.pop());
+            zeroes.push(twos.pop());
+            ones.push(twos.pop());
+            ones.push(twos.pop());
+            
+            if(zeroes.includes(curPlayer)){
+                stacks = 0;
+            } else if(ones.includes(curPlayer)){ 
+                stacks = 1;
+            }
+                
+                
+            // Moves players into position
+            for(var i = 0; i < zeroes.length; i++){
+                zeroes[i].style.transform = 'translateY(-5.0vh)';
+                if( stacks == 0 &&
+                    curPlayer.getBoundingClientRect().left > zeroes[i].getBoundingClientRect().left){
+                    console.log(curPlayer.getBoundingClientRect().left)
+                    console.log(zeroes[i].getBoundingClientRect().left)
+                    east = true;
+                }
+            }
+            for(var i = 0; i < ones.length; i++){
+                ones[i].style.transform = 'translateY(5.0vh)';
+                if( stacks == 1 &&
+                    curPlayer.getBoundingClientRect().left > zeroes[i].getBoundingClientRect().left){
+                    console.log(curPlayer.getBoundingClientRect().left)
+                    console.log(ones[i].getBoundingClientRect().left)
+                    east = true;
+                }
+            }
+            for(var i = 0; i < twos.length; i++){
+                twos[i].style.transform = 'translateY(0vh)';
+            }
+            
+            // Figure out what debuffs to display
+            if(stacks == 0){
+                leftDebuffImg.src="critical.png";
+                rightDebuffImg.style.display = "none";
+                rightDebuffLabel.style.display = "none";
+                if(east){
+                    correctTower = document.getElementById("eTower");
+                } else {
+                    correctTower = document.getElementById("wTower");
+                }
+                
+            } else if(stacks == 1){
+                stacks = 1;
+                leftDebuffImg.src="critical.png";
+                rightDebuffImg.style.display = "none";
+                rightDebuffLabel.style.display = "none";
+                if(east){
+                    correctTower = document.getElementById("se1Tower");
+                } else {
+                    correctTower = document.getElementById("sw1Tower");
+                }
+            } else {
+                leftDebuffImg.src="critical.png";
+                rightDebuffImg.style.display = "block";
+                rightDebuffLabel.style.display = "block";
+                
+                probability = Math.floor(Math.random() * 4);
+                switch (probability) {
+                    case 0: //2 short astral
+                        rightDebuffImg.src="astral.png";
+                        rightDebuffLabel.value = "16";
+                        if(eTowerBlack){
+                            correctTower = document.getElementById("eTower");
+                        } else {
+                            correctTower = document.getElementById("wTower");
+                        }
+                        break;
+                    case 1: //2 short umbral
+                        rightDebuffImg.src="umbral.png";
+                        rightDebuffLabel.value = "16";
+                        if(eTowerBlack){
+                            correctTower = document.getElementById("wTower");
+                        } else {
+                            correctTower = document.getElementById("eTower");
+                        }
+                        break;
+                    case 2: //2 long astral
+                        rightDebuffImg.src="astral.png";
+                        rightDebuffLabel.value = "20";
+                        if(eTowerBlack){
+                            correctTower = document.getElementById("se1Tower");
+                        } else {
+                            correctTower = document.getElementById("sw1Tower");
+                        }
+                        break;
+                    case 3: //2 long umbral
+                        rightDebuffImg.src="umbral.png";
+                        rightDebuffLabel.value = "20";
+                        if(eTowerBlack){
+                            correctTower = document.getElementById("sw1Tower");
+                        } else {
+                            correctTower = document.getElementById("se1Tower");
+                        }
+                        break;
+                    default:
+                }
+            }
+            leftDebuffLabel.value = stacks.toString();
+            
+            //Unhide debuffs
+            leftDebuffImg.style.display = "block";
+            leftDebuffLabel.style.display = "block";
+                
+            //Start the timer
+            startTime = Date.now();
+        }
+    }
+    
+    /* Reset all game elements
+     *
+     *
+     */
+    function reset() {
+        var players = document.querySelectorAll('.playerButton');
+        
+        //Reset players
+        players.forEach(function(reset) {
+            reset.style.transform = 'translateY(0px)';
+            reset.classList.remove('selected');
+        });
+        curPlayer = null;
+        
+        //Reset towers
+        resetTowers();
+        
+        //Hide debuffs
+        leftDebuffImg.style.display = "none";
+        rightDebuffImg.style.display = "none";
+        leftDebuffLabel.style.display = "none";
+        rightDebuffLabel.style.display = "none";
+        
+        stopTime();
+    }
+    
+    /* Reset towers
+     *
+     *
+     */
+    function resetTowers(){
+        var towers = document.querySelectorAll('.towerButton');
+        towers.forEach(function(towerButton) {
+            towerButton.classList.remove('black');
+            towerButton.classList.remove('white');
+            towerButton.classList.remove('correct');
+            towerButton.classList.remove('wrong');
+        });
+        correctTower = null;
+    }
+    
+    /* Stop the timer and display the new time
+     *
+     *
+     */
+    function stopTime(){
+        var duration = (Date.now() - startTime) / 1000;
+        timeBox.value = duration.toString();
+    }
+    
+    /* Randomize given array
+     *
+     *
+     */
+    function shuffle(array) {
+        let currentIndex = array.length,  randomIndex;
+
+        // While there remain elements to shuffle.
+        while (currentIndex > 0) {
+
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+
+  return array;
+}
+</script>
+
+</body>
+</html>
