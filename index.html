@@ -200,14 +200,14 @@
 <input type="text" id="rightDebuffLabel" readonly placeholder="" style="display: none;">
 
 <div class="button-container">
-    <button class="playerButton" onclick="playerSelect(this)">Player</button>
-    <button class="playerButton" onclick="playerSelect(this)">Player</button>
-    <button class="playerButton" onclick="playerSelect(this)">Player</button>
-    <button class="playerButton" onclick="playerSelect(this)">Player</button>
-    <button class="playerButton" onclick="playerSelect(this)">Player</button>
-    <button class="playerButton" onclick="playerSelect(this)">Player</button>
-    <button class="playerButton" onclick="playerSelect(this)">Player</button>
-    <button class="playerButton" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" id="0" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" id="1" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" id="2" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" id="3" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" id="4" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" id="5" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" id="6" onclick="playerSelect(this)">Player</button>
+    <button class="playerButton" id="7" onclick="playerSelect(this)">Player</button>
 </div>
 <button class="towerButton" id="wTower" onclick="towerSelect(this)" style="bottom:55vh; margin-left: -100vh">W</button>
 <button class="towerButton" id="nw1Tower" onclick="towerSelect(this)"style="bottom:65vh; margin-left: -70vh">NW1</button>
@@ -328,18 +328,14 @@
             for(var i = 0; i < zeroes.length; i++){
                 zeroes[i].style.transform = 'translateY(-5.0vh)';
                 if( stacks == 0 &&
-                    curPlayer.getBoundingClientRect().left > zeroes[i].getBoundingClientRect().left){
-                    console.log(curPlayer.getBoundingClientRect().left)
-                    console.log(zeroes[i].getBoundingClientRect().left)
+                    parseInt(curPlayer.id) > parseInt(zeroes[i].id)){
                     east = true;
                 }
             }
             for(var i = 0; i < ones.length; i++){
                 ones[i].style.transform = 'translateY(5.0vh)';
                 if( stacks == 1 &&
-                    curPlayer.getBoundingClientRect().left > zeroes[i].getBoundingClientRect().left){
-                    console.log(curPlayer.getBoundingClientRect().left)
-                    console.log(ones[i].getBoundingClientRect().left)
+                    parseInt(curPlayer.id) > parseInt(ones[i].id)){
                     east = true;
                 }
             }
